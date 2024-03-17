@@ -2,7 +2,7 @@ close all
 arquivo_audio = 'audio.wav';
 [x, fs] = audioread(arquivo_audio);
 
-%sound(x, fs); %clear sound
+%sound(x, fs);
 
 % o sinal é estereo, portanto temos duas colunas. Selecionando apenas uma
 % delas para trabalhar
@@ -27,3 +27,6 @@ Y_mag = abs(fftshift(Y))/N;
 
 figure;
 plot(f, Y_mag);
+title('Espectro de Frequências do sinal com interferência');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');

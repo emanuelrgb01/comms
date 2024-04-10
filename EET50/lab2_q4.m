@@ -2,11 +2,14 @@ arquivo_audio = 'audio.wav';
 [signal, fs] = audioread(arquivo_audio);
 signal = transpose(signal);
 
-T_am = 1/fs;    % periodo de amostragem
-delta = 0.1;    % valor do passo delta
-f_fil = 1.0;    % frequencia do filtro
-N = length(signal);
-t = (1:N)/fs;
+f_fil = 5000;    % frequencia do filtro
+delta = 0.1;%240*pi*f_fil/fs;    % valor do passo delta
+t = (0:(length(signal)-1))/fs;
+
+figure
+subplot(2,1,1);
+plotFFT(signal(1,:),fs)
+title("FFT do sinal original");
 
 %% Calcular codificaçao
 recebido = [[0;0] signal];
@@ -22,13 +25,19 @@ filtrado = [lowpass(recebido(1,2:end),f_fil,fs,ImpulseResponse="iir",Steepness=0
 %            lowpass(recebido(2,2:end),f_fil,fs,ImpulseResponse="iir",Steepness=0.7)];
 
 %% Gerar grafico
-f = figure;
-hold on
-plotFFT(signal(1,:),fs)
+
+subplot(2,1,2);
 plotFFT(filtrado,fs)
 title(strcat("FFT do sinal DM, Δ = ", num2str(delta)));
-legend("Sinal original","Sinal filtrado");
-hold off
+
+figure
+subplot(2,1,1);
+plot(t,signal(1,:))
+title("Forma de onda do sinal original");
+subplot(2,1,2);
+plot(t,filtrado)
+title(strcat("Forma de onda do sinal DM, Δ = ", num2str(delta)));
 
 %% Tocar som
-%sound((filtrado),fs);
+sound(filtrado,fs);
+%clear sound

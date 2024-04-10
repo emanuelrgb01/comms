@@ -1,8 +1,7 @@
 %% Gerar o Seno
 clear all
 frequencia_seno = 10*1000;
-f_s = 100*frequencia_seno;
-t = [0:1/f_s:10/frequencia_seno];
+t = [0:1/(100*frequencia_seno):10/frequencia_seno];
 sinal_seno = sin(2*pi*frequencia_seno*t);
 
 subplot(3,1,1);
@@ -14,6 +13,7 @@ legend('Message Signal ---->');
 grid on
 
 %% Amostrando o seno
+f_s = 2*frequencia_seno;
 T_s = 1/f_s;
 %N = length(t);
 
@@ -77,7 +77,4 @@ text (0.5, 1,'\bf Pulse Code Modulation ','HorizontalAlignment','center','Vertic
 % parte do y para mq
 mq = quants;
 % lowpass
-filtrado = lowpass(mq,frequencia_seno,f_s,ImpulseResponse="iir",Steepness=0.7);
-figure
-plot(t, filtrado)
-title("Sinal recuperado");
+filtrado = lowpass(mq,frequencia_seno,1/f,ImpulseResponse="iir",Steepness=0.7);

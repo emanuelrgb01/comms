@@ -1,9 +1,11 @@
 %% Gerar o Seno
 clear all
-frequencia_seno = 10*1000;
-f_s = 100*frequencia_seno;
-t = [0:1/f_s:10/frequencia_seno];
-sinal_seno = sin(2*pi*frequencia_seno*t);
+arquivo_audio = 'audio.wav';
+[signal, f_s] = audioread(arquivo_audio);
+sinal_seno = transpose(signal(:,1));
+
+frequencia_seno = 10*1000; %freq de corte
+t = [0:1/f_s:(length(sinal_seno)-1)/f_s];
 
 subplot(3,1,1);
 plot(t,sinal_seno,'black');
@@ -22,7 +24,7 @@ T_s = 1/f_s;
 
 %sinal_amostrado = sin(f_digital .* n);
 %% Quantizando o sinal
-num_bits = 2;
+num_bits = 8;
 L = 2^num_bits;
 max_sen = max(sinal_seno);
 min_sen = min(sinal_seno);
@@ -59,7 +61,7 @@ T_por_bit = T_enc/num_bits;
 y = de2bi(index);
 
 y = reshape(y',1,[]);
-t_enc = [0:1/(100*frequencia_seno)/num_bits:10/frequencia_seno+1/(100*frequencia_seno)/num_bits];
+t_enc = [0:1/(f_s)/num_bits:(length(sinal_seno)-1)/f_s+1/(f_s)/num_bits];
 
 subplot(3,1,3);
 plot(t_enc,y,'red');

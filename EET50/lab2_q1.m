@@ -2,27 +2,19 @@
 clear all
 frequencia_seno = 10*1000;
 f_s = 100*frequencia_seno;
-t = [0:1/f_s:10/frequencia_seno];
+t = [0:1/f_s:10/frequencia_seno-1/f_s];
 sinal_seno = sin(2*pi*frequencia_seno*t);
 
 subplot(3,1,1);
 plot(t,sinal_seno,'black');
-title('Message Signal');
-xlabel('Time(s) ---->')
-ylabel('Amplitude(V) ---->')
-legend('Message Signal ---->');
+title('Sinal Mensagem');
+xlabel('Tempo (s)')
+ylabel('Amplitude (V)')
+legend('Sinal Mensagem');
 grid on
 
-%% Amostrando o seno
-T_s = 1/f_s;
-%N = length(t);
-
-%t_amostra = [0 : T_s : 10/frequencia_seno];
-%f_digital = 2*pi*frequencia_seno/f_s;
-
-%sinal_amostrado = sin(f_digital .* n);
 %% Quantizando o sinal
-num_bits = 2;
+num_bits = 8;
 L = 2^num_bits;
 max_sen = max(sinal_seno);
 min_sen = min(sinal_seno);
@@ -45,38 +37,47 @@ end
 
 subplot(3,1,2);
 plot(t,quants);
-title('Quantized Signal');
-xlabel('Samples ---->')
-ylabel('Amplitude(V) ---->')
-legend('Quantized Signal ---->');
+title('Sinal Quantizado');
+xlabel('Amostras')
+ylabel('Amplitude (V)')
+legend('Sinal Quantizado');
 grid on
 
-%% Encode
-Rb = frequencia_seno * num_bits;
+%% Codificação
+Rb = f_s * num_bits;
 T_enc = 1/Rb;
-T_por_bit = T_enc/num_bits;
 
 y = de2bi(index);
 
 y = reshape(y',1,[]);
-t_enc = [0:1/(100*frequencia_seno)/num_bits:10/frequencia_seno+1/(100*frequencia_seno)/num_bits];
+qtd_y = length(y);
+
+t_enc = [0: T_enc : (10/frequencia_seno - T_enc)];
 
 subplot(3,1,3);
 plot(t_enc,y,'red');
-title('PCM Signal');
-xlabel('Samples ---->');
-ylabel('Amplitude(V) ---->')
-legend('PCM Signal ---->');
+title('Sinal PCM');
+xlabel('Amostras');
+ylabel('Amplitude (V)')
+legend('Sinal PCM');
 grid on
 
 ha = axes ('Position',[0 0 1 1],'Xlim',[0 1],'Ylim',[0 1],'Box','off','Visible','off','Units','normalized', 'clipping' , 'off');
-text (0.5, 1,'\bf Pulse Code Modulation ','HorizontalAlignment','center','VerticalAlignment', 'top')
+text (0.5, 1,'\bf Modulação PCM ','HorizontalAlignment','center','VerticalAlignment', 'top')
 
 
 %% Demodulação
 % parte do y para mq
-mq = quants;
-% lowpass
+
+mq = zeros(length(y)/num_bits,1)';
+volta = bit2int(y',num_bits,false)'; % false porque o bit mais significante é o ultimo
+
+for i = 1:length(volta)
+    mq(i) = (min_sen + delta/2) + volta(i)*delta;
+
+end
+
+% Passa baixas
 filtrado = lowpass(mq,frequencia_seno,f_s,ImpulseResponse="iir",Steepness=0.7);
 figure
 plot(t, filtrado)

@@ -1,7 +1,7 @@
 %% Gerar o Seno
 clear all
 frequencia_seno = 10*1000;
-f_s = 100*frequencia_seno;
+f_s = 10*frequencia_seno;
 t = [0:1/f_s:10/frequencia_seno-1/f_s];
 sinal_seno = sin(2*pi*frequencia_seno*t);
 
@@ -74,7 +74,6 @@ volta = bit2int(y',num_bits,false)'; % false porque o bit mais significante é o
 
 for i = 1:length(volta)
     mq(i) = (min_sen + delta/2) + volta(i)*delta;
-
 end
 
 % Passa baixas
